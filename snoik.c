@@ -102,6 +102,11 @@ int main(void) {
 
     Tile* ptr = snake_head;
     while (ptr != NULL) {
+      if ((ptr != snake_head) && (ptr->x == snake_head->x) &&
+          (ptr->y == snake_head->y)) {
+        reset_game();
+        break;
+      }
       mvaddch(ptr->y, ptr->x, SNAKE_TILE);
       ptr = ptr->next;
     }
