@@ -10,6 +10,7 @@ typedef enum { UP, DOWN, LEFT, RIGHT } Direction;
 
 int max_x, max_y;
 Direction current_dir = RIGHT;
+bool is_paused = false;
 
 typedef struct Tile {
   char x, y;
@@ -70,6 +71,7 @@ void init_game(void) {
 }
 
 void reset_game(void) {
+  is_paused = true;
   snake_reset();
   init_game();
   current_dir = RIGHT;
@@ -111,36 +113,41 @@ int main(void) {
       should_deq = false;
     }
 
-    switch (current_dir) {
-      case RIGHT:
-        snake_enqueue(snake_head->y, snake_head->x + 1);
-        break;
-      case LEFT:
-        snake_enqueue(snake_head->y, snake_head->x - 1);
-        break;
-      case UP:
-        snake_enqueue(snake_head->y - 1, snake_head->x);
-        break;
-      case DOWN:
-        snake_enqueue(snake_head->y + 1, snake_head->x);
-        break;
-    }
-
-    if (should_deq) snake_dequeue();
-
     int c = getch();
-    if (c == 'r')
+    if (c == ' ')
+      is_paused = !is_paused;
+    else if (c == 'r')
       reset_game();
     else if (c == 'q')
       break;
-    else if (c == KEY_UP && current_dir != DOWN)
-      current_dir = UP;
-    else if (c == KEY_DOWN && current_dir != UP)
-      current_dir = DOWN;
-    else if (c == KEY_LEFT && current_dir != RIGHT)
-      current_dir = LEFT;
-    else if (c == KEY_RIGHT && current_dir != LEFT)
-      current_dir = RIGHT;
+
+    if (!is_paused) {
+      switch (current_dir) {
+        case RIGHT:
+          snake_enqueue(snake_head->y, snake_head->x + 1);
+          break;
+        case LEFT:
+          snake_enqueue(snake_head->y, snake_head->x - 1);
+          break;
+        case UP:
+          snake_enqueue(snake_head->y - 1, snake_head->x);
+          break;
+        case DOWN:
+          snake_enqueue(snake_head->y + 1, snake_head->x);
+          break;
+      }
+
+      if (should_deq) snake_dequeue();
+
+      if (c == KEY_UP && current_dir != DOWN)
+        current_dir = UP;
+      else if (c == KEY_DOWN && current_dir != UP)
+        current_dir = DOWN;
+      else if (c == KEY_LEFT && current_dir != RIGHT)
+        current_dir = LEFT;
+      else if (c == KEY_RIGHT && current_dir != LEFT)
+        current_dir = RIGHT;
+    }
 
     refresh();
   }
