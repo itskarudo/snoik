@@ -6,12 +6,7 @@
 #define SNAKE_TILE '#'
 #define APPLE_TILE '@'
 
-typedef enum {
-  UP = KEY_UP,
-  DOWN = KEY_DOWN,
-  LEFT = KEY_LEFT,
-  RIGHT = KEY_RIGHT
-} Direction;
+typedef enum { UP, DOWN, LEFT, RIGHT } Direction;
 
 int max_x, max_y;
 Direction current_dir = RIGHT;
@@ -138,9 +133,14 @@ int main(void) {
       reset_game();
     else if (c == 'q')
       break;
-    else if ((c == KEY_UP) || (c == KEY_DOWN) || (c == KEY_LEFT) ||
-             (c == KEY_RIGHT))
-      current_dir = c;
+    else if (c == KEY_UP && current_dir != DOWN)
+      current_dir = UP;
+    else if (c == KEY_DOWN && current_dir != UP)
+      current_dir = DOWN;
+    else if (c == KEY_LEFT && current_dir != RIGHT)
+      current_dir = LEFT;
+    else if (c == KEY_RIGHT && current_dir != LEFT)
+      current_dir = RIGHT;
 
     refresh();
   }
