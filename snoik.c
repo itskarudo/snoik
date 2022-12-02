@@ -60,9 +60,20 @@ void snake_reset(void) {
   snake_tail = NULL;
 }
 
+bool touches_snake(int y, int x) {
+  Tile* ptr = snake_head;
+  while (ptr != NULL) {
+    if (ptr->y == y && ptr->x == x) return true;
+    ptr = ptr->next;
+  }
+  return false;
+}
+
 void place_apple(void) {
-  apple.y = rand() % max_y;
-  apple.x = rand() % max_x;
+  do {
+    apple.y = rand() % max_y;
+    apple.x = rand() % max_x;
+  } while (touches_snake(apple.y, apple.x));
 }
 
 void init_game(void) {
@@ -96,6 +107,9 @@ int main(void) {
     clear();
 
     mvaddch(apple.y, apple.x, APPLE_TILE);
+    attron(A_REVERSE);
+    if (is_paused) mvprintw(0, 0, " PAUSED ");
+    attroff(A_REVERSE);
 
     Tile* ptr = snake_head;
     while (ptr != NULL) {
